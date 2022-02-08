@@ -1,37 +1,47 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, SafeAreaView, Button, Alert, Image } from 'react-native';
+import React,{ useState } from 'react';
+import { StyleSheet, View, FlatList, Text } from 'react-native';
+import Header from './components/Header';
+import ListItem from "./components/ListItem";
+import Form from "./components/Form";
 
 export default function App() {
-    const handleTextPress = () => console.log('presss')
-    const handleButtonPress = () => Alert.alert("Native", "Main message", [
-        {text: "yes", onPress: () => console.log('yes button')},
-        {text: 'cansel', onPress: () => console.log('cansel button')}
+    const [listOfItems, setListOfItems] = useState([
+        {text: 'купить молоко', key: '1'},
+        {text: 'помыть машину', key: '2'},
+        {text: 'купить картошку', key: '3'},
+        {text: 'стать миллионером', key: '4'}
     ])
-    const handleButtonPress2 = () => Alert.prompt("Native", "Main message",text => console.log(text));
+
+    const addHandler = (text) => {
+        setListOfItems((list) => {
+            return [
+                {text: text, key: Math.random().toString(36).substring(7)},
+                ...list
+            ]
+        })
+    }
+
+    const deleteHandler = (key) => {
+        setListOfItems((list) => {
+            return list.filter(listOfItems => listOfItems.key !== key)
+        })
+    }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text numberOfLines={1} style={styles.text} onPress={handleTextPress} >Hello! {'\n'}brother</Text>
-        <Button title={'click me'} onPress={handleButtonPress} />
-        <Button title={'click2 me'} onPress={handleButtonPress2}/>
-
-        <Image source={require('./assets/adaptive-icon.png')}/>
-
-      <StatusBar style="auto" />
-    </SafeAreaView>
+   <View>
+       <Header />
+       <Form addHandler={addHandler} />
+       <View>
+           <FlatList data={listOfItems} renderItem={({ item }) => (
+               <ListItem el={item} deleteHandler={deleteHandler}/>
+           )} />
+       </View>
+   </View>
   );
 }
 
+
+
 const styles = StyleSheet.create({
-  container: {
-      marginTop: 50,
-      flex: 1,
-      backgroundColor: '#fff',
-      justifyContent: 'flex-start',
-  },
-    text: {
-      alignSelf: 'center',
-      color: 'red',
-    },
+
 });
